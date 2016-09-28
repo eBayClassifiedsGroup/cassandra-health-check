@@ -137,6 +137,7 @@ public class CassandraHealthCheck {
         final Cluster.Builder cb = Cluster.builder()
                 .addContactPoint(host)
                 .withSocketOptions(new SocketOptions().setConnectTimeoutMillis(2000))
+                .withSocketOptions(new SocketOptions().setReadTimeoutMillis(12000))
                 .withPort(port)
                 .withLoadBalancingPolicy(loadBalancingPolicy)
                 .withRetryPolicy(retryPolicy);
@@ -156,7 +157,7 @@ public class CassandraHealthCheck {
         QueryTrace queryTrace;
         cluster.register(new LoggingLatencyTracker());
         try {
-            final ResultSet results = session.execute(health.setReadTimeoutMillis(12000));
+            final ResultSet results = session.execute(health);
             final ExecutionInfo executionInfo = results.getExecutionInfo();
             queryTrace = executionInfo.getQueryTrace();
         } catch (NoHostAvailableException e) {
